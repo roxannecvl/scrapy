@@ -1426,6 +1426,8 @@ class FormRequestTest(RequestTest):
             r = self.request_class.from_response(response)
             self.assertEqual(r.method, expected)
 
+    def test_from_response_get_form_COVERAGE(self):
+        self.request_class.get_form_COVERAGE()
 
 def _buildresponse(body, **kwargs):
     kwargs.setdefault("body", body)
@@ -1649,3 +1651,4 @@ class JsonRequestTest(RequestTest):
 
 if __name__ == "__main__":
     unittest.main()
+

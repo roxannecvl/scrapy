@@ -69,6 +69,8 @@ Document your experience in using a "new"/different coverage tool.
 How well was the tool documented? Was it possible/easy/difficult to
 integrate it with your build environment?
 
+---
+
 The coverage on the original Scrapy repo leads to this, and looking
 up my function, it is mostly covered with a small gap which
 we will address with an extra test case.
@@ -107,6 +109,20 @@ git diff ...
 
 What kinds of constructs does your tool support, and how accurate is
 its output?
+
+---
+
+I took the simple approach to manual instrumentation of my function by
+creating an array and hardcoding in the function the different branches
+if they are accessed with the array. At the end of the test class,
+the array will be printed and thereby showing whether all branches
+have been taken or not. Also added else clauses to the if without to
+make sure that the path of the if clause being skipped exists.
+
+In the test file, after all the tests have been ran, I run the function
+that prints out this global array of what parts of the function have
+been run, and the results correspond with the Lizard results
+where one of the clauses did not get run.
 
 ### Evaluation
 
