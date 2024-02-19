@@ -963,6 +963,9 @@ class TestReferrerOnRedirect(TestRefererMiddleware):
         self.referrermw = RefererMiddleware(settings)
         self.redirectmw = RedirectMiddleware(settings)
 
+    def tearDown(self):
+        print(self.redirectmw.get_coverage_process_response())
+
     def test(self):
         for (
             parent,

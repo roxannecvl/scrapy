@@ -19,6 +19,7 @@ if TYPE_CHECKING:
     from typing_extensions import Self
 
 logger = logging.getLogger(__name__)
+coverage_matrix = [False] * 11 #10 interest points 
 
 
 def _build_redirect_request(
@@ -107,37 +108,62 @@ class RedirectMiddleware(BaseRedirectMiddleware):
     and meta-refresh html tag.
     """
 
+    def get_coverage_process_response(self) : 
+        return coverage_matrix
+    
     def process_response(
         self, request: Request, response: Response, spider: Spider
     ) -> Union[Request, Response]:
+        coverage_matrix[0] = True
         if ( 
             request.meta.get("dont_redirect", False)
             or response.status in getattr(spider, "handle_httpstatus_list", [])
             or response.status in request.meta.get("handle_httpstatus_list", [])
             or request.meta.get("handle_httpstatus_all", False)
         ): # 1-4
+            if(request.meta.get("dont_redirect", False)): 
+                coverage_matrix[1] = True
+            elif(response.status in getattr(spider, "handle_httpstatus_list", [])) : 
+                coverage_matrix[2] = True
+            elif(response.status in request.meta.get("handle_httpstatus_list", [])) : 
+                coverage_matrix[3] = True
+            elif(request.meta.get("handle_httpstatus_all", False)): 
+                coverage_matrix[4] = True
+
             return response # s=1
 
         allowed_status = (301, 302, 303, 307, 308)
         if "Location" not in response.headers or response.status not in allowed_status: # 5-6
+            if("Location" not in response.headers): 
+                coverage_matrix[5] = True
+            elif(response.status not in allowed_status) : 
+                coverage_matrix[6] = True
+
             return response # s=2
 
-        assert response.headers["Location"] is not None # 7, s=3
+        assert response.headers["Location"] is not None
         location = safe_url_string(response.headers["Location"])
-        if response.headers["Location"].startswith(b"//"): # 8
+
+        if response.headers["Location"].startswith(b"//"): # 7
+            coverage_matrix[7] = True
             request_scheme = urlparse(request.url).scheme
             location = request_scheme + "://" + location.lstrip("/")
 
         redirected_url = urljoin(request.url, location)
 
-        if response.status in (301, 307, 308) or request.method == "HEAD":# 9-10
+        if response.status in (301, 307, 308) or request.method == "HEAD":# 8-9
+            if(response.status in (301, 307, 308)) : 
+                coverage_matrix[8] = True
+            elif(request.method == "HEAD") : 
+                coverage_matrix[9] = True
             redirected = _build_redirect_request(request, url=redirected_url)
-            return self._redirect(redirected, request, spider, response.status) # s=4
+            return self._redirect(redirected, request, spider, response.status) # s=3
 
+        coverage_matrix[10] = True
         redirected = self._redirect_request_using_get(request, redirected_url)
-        return self._redirect(redirected, request, spider, response.status) #s=5
+        return self._redirect(redirected, request, spider, response.status) #s=4
     
-    #Total CCN = 10 - 5 + 2 = 7 (10 according to lizard)
+    #Total CCN = 9 - 4 + 2 = 7 (10 according to lizard)
 
 class MetaRefreshMiddleware(BaseRedirectMiddleware):
     enabled_setting = "METAREFRESH_ENABLED"
