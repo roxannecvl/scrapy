@@ -122,39 +122,41 @@ def _get_form(
     """Find the wanted form element within the given response."""
     root = create_root_node(response.text, HTMLParser, base_url=get_base_url(response))
     forms = root.xpath("//form")
-    if not forms:
+    if not forms: #1
         raise ValueError(f"No <form> element found in {response}")
 
-    if formname is not None:
+    if formname is not None: #2
         f = root.xpath(f'//form[@name="{formname}"]')
-        if f:
+        if f: #3
             return cast(FormElement, f[0])
 
-    if formid is not None:
+    if formid is not None: #4
         f = root.xpath(f'//form[@id="{formid}"]')
-        if f:
+        if f: #5
             return cast(FormElement, f[0])
 
     # Get form element from xpath, if not found, go up
-    if formxpath is not None:
+    if formxpath is not None: #6
         nodes = root.xpath(formxpath)
-        if nodes:
+        if nodes: #7
             el = nodes[0]
-            while True:
-                if el.tag == "form":
+            while True: #8
+                if el.tag == "form": #9
                     return cast(FormElement, el)
                 el = el.getparent()
-                if el is None:
+                if el is None: #10
                     break
         raise ValueError(f"No <form> element found with {formxpath}")
 
     # If we get here, it means that either formname was None or invalid
-    try:
+    try: #11
         form = forms[formnumber]
     except IndexError:
         raise IndexError(f"Form number {formnumber} not found in {response}")
     else:
         return cast(FormElement, form)
+
+    #+1, CCN=12
 
 
 def _get_inputs(
