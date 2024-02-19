@@ -1,26 +1,27 @@
 # Report for assignment 3
 
-This is a template for your report. You are free to modify it as needed.
-It is not required to use markdown for your report either, but the report
-has to be delivered in a standard, cross-platform format.
-
 ## Project
 
-Name:
+Name: Scrapy
 
-URL:
+URL: https://github.com/roxannecvl/scrapy/tree/master
 
-One or two sentences describing it
+We forked the Scrapy open source project which is a web scraper to perform
+assignment 3 on.
 
 ## Onboarding experience
 
-Did it build and run as documented?
-    
-See the assignment for details; if everything works out of the box,
-there is no need to write much here. If the first project(s) you picked
-ended up being unsuitable, you can describe the "onboarding experience"
-for each project, along with reason(s) why you changed to a different one.
+We started off with Pyspider which made use of a requirements.txt to
+document the dependencies which Python has tools to download automatically.
+Running the tests however, we discovered that somethings had been deprecated
+meaning a major overhaul would be required to get the code running and we
+therefore swapped project.
 
+Scrapy's README.md itself didn't have that much documentation. You instead
+have to navigate to their website which includes a bunch of documentation on
+running, testing, how to contribute etc. Since the project is fairly large,
+the setup process which uses a setup.py takes quite a bit of time. Running
+the test suite also takes upwards of 10 minutes.
 
 ## Complexity
 
