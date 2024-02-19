@@ -44,6 +44,12 @@ in Python is that functions starting with an underscore is supposed to
 be Private, meaning it is only invoked within the class by another
 function.
 
+The function that I am going to peer review in regards to Cyclomatic
+Complexity Number is strip_url in scrapy/utils/url.py. Lizard gives
+it a CCN of 12 and my manual count also leads to 12 assuming
+counting the amount of decision points + 1 as well as the logical
+operators 'or' and 'and' within the if statements.
+ 
 ## Refactoring
 
 Plan for refactoring complex code:
