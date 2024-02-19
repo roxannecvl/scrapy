@@ -69,6 +69,32 @@ Document your experience in using a "new"/different coverage tool.
 How well was the tool documented? Was it possible/easy/difficult to
 integrate it with your build environment?
 
+The coverage on the original Scrapy repo leads to this, and looking
+up my function, it is mostly covered with a small gap which
+we will address with an extra test case.
+https://app.codecov.io/github/scrapy/scrapy/blob/master/scrapy%2Fhttp%2Frequest%2Fform.py
+
+Using GitHub:s code indexing, we can see that _get_form is invoked once
+from from_response in the same class. Looking for the relevant invocations
+of this function, we find 64 calls all within tests/test_http_request.py
+meaning we can cut down the test suite considerably when focusing on this
+function alone.
+
+Running this singular test file yields that 177 tests passed.
+
+Using Coverage.py at first was tricky, I ran the test file with
+coverage run -m unittest test_http_request.py and the report only
+yielded the coverage of the test file itself. After some troubleshooting
+the problem was that I didn't run the command from the root of the
+repository, so I changed my location and command to
+coverage run -m unittest tests/test_http_request.py.
+
+I then generated coverage html and checked the function that I am interested
+in. What I found is that most things is indeed covered at 96%. As for
+the function I am interested in, there is 1 decision path that is not
+covered.
+
+
 ### Your own coverage tool
 
 Show a patch (or link to a branch) that shows the instrumented code to
