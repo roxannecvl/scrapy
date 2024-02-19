@@ -110,33 +110,34 @@ class RedirectMiddleware(BaseRedirectMiddleware):
     def process_response(
         self, request: Request, response: Response, spider: Spider
     ) -> Union[Request, Response]:
-        if (
+        if ( 
             request.meta.get("dont_redirect", False)
             or response.status in getattr(spider, "handle_httpstatus_list", [])
             or response.status in request.meta.get("handle_httpstatus_list", [])
             or request.meta.get("handle_httpstatus_all", False)
-        ):
-            return response
+        ): # 1-4
+            return response # s=1
 
         allowed_status = (301, 302, 303, 307, 308)
-        if "Location" not in response.headers or response.status not in allowed_status:
-            return response
+        if "Location" not in response.headers or response.status not in allowed_status: # 5-6
+            return response # s=2
 
-        assert response.headers["Location"] is not None
+        assert response.headers["Location"] is not None # 7, s=3
         location = safe_url_string(response.headers["Location"])
-        if response.headers["Location"].startswith(b"//"):
+        if response.headers["Location"].startswith(b"//"): # 8
             request_scheme = urlparse(request.url).scheme
             location = request_scheme + "://" + location.lstrip("/")
 
         redirected_url = urljoin(request.url, location)
 
-        if response.status in (301, 307, 308) or request.method == "HEAD":
+        if response.status in (301, 307, 308) or request.method == "HEAD":# 9-10
             redirected = _build_redirect_request(request, url=redirected_url)
-            return self._redirect(redirected, request, spider, response.status)
+            return self._redirect(redirected, request, spider, response.status) # s=4
 
         redirected = self._redirect_request_using_get(request, redirected_url)
-        return self._redirect(redirected, request, spider, response.status)
-
+        return self._redirect(redirected, request, spider, response.status) #s=5
+    
+    #Total CCN = 10 - 5 + 2 = 7 (10 according to lizard)
 
 class MetaRefreshMiddleware(BaseRedirectMiddleware):
     enabled_setting = "METAREFRESH_ENABLED"
