@@ -59,6 +59,9 @@ class FormRequest(Request):
                     urlunsplit(urlsplit(self.url)._replace(query=form_query_str))
                 )
 
+    def get_form_COVERAGE():
+        print(_get_form_COVERAGE)
+
     @classmethod
     def from_response(
         cls,
@@ -92,6 +95,12 @@ class FormRequest(Request):
 
         return cls(url=url, method=method, formdata=formdata, **kwargs)
 
+_get_form_COVERAGE = [False, False, False, False,
+                      False, False, False, False,
+                      False, False, False, False,
+                      False, False, False, False,
+                      False, False, False, False,
+                      False, False, False, False] #24 points of interest
 
 def _get_form_url(form: FormElement, url: Optional[str]) -> str:
     assert form.base_url is not None  # typing
@@ -111,7 +120,6 @@ def _urlencode(seq: Iterable[FormdataKVType], enc: str) -> str:
     ]
     return urlencode(values, doseq=True)
 
-
 def _get_form(
     response: TextResponse,
     formname: Optional[str],
@@ -120,41 +128,77 @@ def _get_form(
     formxpath: Optional[str],
 ) -> FormElement:
     """Find the wanted form element within the given response."""
+    _get_form_COVERAGE[0] = True
     root = create_root_node(response.text, HTMLParser, base_url=get_base_url(response))
     forms = root.xpath("//form")
-    if not forms:
+    if not forms: #1
+        _get_form_COVERAGE[1] = True
         raise ValueError(f"No <form> element found in {response}")
+    else:
+        _get_form_COVERAGE[2] = True
 
-    if formname is not None:
+    if formname is not None: #2
+        _get_form_COVERAGE[3] = True
         f = root.xpath(f'//form[@name="{formname}"]')
-        if f:
+        if f: #3
+            _get_form_COVERAGE[4] = True
             return cast(FormElement, f[0])
+        else:
+            _get_form_COVERAGE[5] = True
+    else:
+        _get_form_COVERAGE[6] = True
 
-    if formid is not None:
+    if formid is not None: #4
+        _get_form_COVERAGE[7] = True
         f = root.xpath(f'//form[@id="{formid}"]')
-        if f:
+        if f: #5
+            _get_form_COVERAGE[8] = True
             return cast(FormElement, f[0])
+        else:
+            _get_form_COVERAGE[9] = True
+    else:
+        _get_form_COVERAGE[10] = True
 
     # Get form element from xpath, if not found, go up
-    if formxpath is not None:
+    if formxpath is not None: #6
+        _get_form_COVERAGE[11] = True
         nodes = root.xpath(formxpath)
-        if nodes:
+        if nodes: #7
+            _get_form_COVERAGE[12] = True
             el = nodes[0]
-            while True:
-                if el.tag == "form":
+            while True: #8
+                _get_form_COVERAGE[13] = True
+                if el.tag == "form": #9
+                    _get_form_COVERAGE[14] = True
                     return cast(FormElement, el)
+                else:
+                    _get_form_COVERAGE[15] = True
                 el = el.getparent()
-                if el is None:
+                if el is None: #10
+                    _get_form_COVERAGE[16] = True
                     break
+                else:
+                    _get_form_COVERAGE[17] = True
+        else:
+            _get_form_COVERAGE[18] = True
+
+        _get_form_COVERAGE[19] = True
         raise ValueError(f"No <form> element found with {formxpath}")
+    else:
+        _get_form_COVERAGE[20] = True
 
     # If we get here, it means that either formname was None or invalid
-    try:
+    try: #11
+        _get_form_COVERAGE[21] = True
         form = forms[formnumber]
     except IndexError:
+        _get_form_COVERAGE[22] = True
         raise IndexError(f"Form number {formnumber} not found in {response}")
     else:
+        _get_form_COVERAGE[23] = True
         return cast(FormElement, form)
+
+    #+1, CCN=12
 
 
 def _get_inputs(
