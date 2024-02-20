@@ -25,14 +25,6 @@ the test suite also takes upwards of 10 minutes.
 
 ## Complexity
 
-1. What are your results for five complex functions?
-   * Did all methods (tools vs. manual count) get the same result?
-   * Are the results clear?
-2. Are the functions just complex, or also long?
-3. What is the purpose of the functions?
-4. Are exceptions taken into account in the given measurements?
-5. Is the documentation clear w.r.t. all the possible outcomes?
-
 The function I am going to be looking at is _get_form in 
 scrapy/http/request/form.py. Using the lizard tool, it assigns
 the function a value of 12 CCN and an NLOC of 37. A manual count by
@@ -44,7 +36,9 @@ The purpose of the function is to find a form in an HTTP request.
 There is not much documentation on this function since the convention
 in Python is that functions starting with an underscore is supposed to
 be Private, meaning it is only invoked within the class by another
-function.
+function. The function is moderately convoluted and long because of
+all the nested if-statements and all the exceptions that needs to
+be taken into account.
 
 The function that I am going to peer review in regards to Cyclomatic
 Complexity Number is strip_url in scrapy/utils/url.py. Lizard gives
@@ -54,24 +48,25 @@ operators 'or' and 'and' within the if statements.
  
 ## Refactoring
 
-Plan for refactoring complex code:
-
-Estimated impact of refactoring (lower CC, but other drawbacks?).
-
-Carried out refactoring (optional, P+):
-
-git diff ...
+To refactor _get_form would be a moderately difficult task as
+the if statements contributing to its high complexity is
+necessary for its function to extract values from a HTTP
+file that can look in many different ways. As the function
+can be seen as having 4-5 major if-statements that successively
+goes deeper and deeper into the HTML file, one could break out
+those into separate functions. The impact would be more readable
+_get_form since you have abstracted those if-statements into
+much fewer lines as a function call. Other than the impact
+on readability, a potential drawback is that you clutter the
+class with more functions that only serve the purpose of being
+used in the _get_form function, making the file more convoluted
+when looking at it from a high level. It becomes a trade-off
+between readability of the individual function or the readability
+of the whole class.
 
 ## Coverage
 
 ### Tools
-
-Document your experience in using a "new"/different coverage tool.
-
-How well was the tool documented? Was it possible/easy/difficult to
-integrate it with your build environment?
-
----
 
 The coverage on the original Scrapy repo leads to this, and looking
 up my function, it is mostly covered with a small gap which
@@ -101,19 +96,6 @@ covered.
 
 ### Your own coverage tool
 
-Show a patch (or link to a branch) that shows the instrumented code to
-gather coverage measurements.
-
-The patch is probably too long to be copied here, so please add
-the git command that is used to obtain the patch instead:
-
-git diff ...
-
-What kinds of constructs does your tool support, and how accurate is
-its output?
-
----
-
 I took the simple approach to manual instrumentation of my function by
 creating an array and hardcoding in the function the different branches
 if they are accessed with the array. At the end of the test class,
@@ -128,30 +110,28 @@ where one of the clauses did not get run.
 
 ### Evaluation
 
-1. How detailed is your coverage measurement?
-
-2. What are the limitations of your own tool?
-
-3. Are the results of your tool consistent with existing coverage tools?
+The coverage measurement is hard-coded and crude and you have to manually locate
+the corresponding line of code that has not been run from the terminal output.
+One limitation to this approach is that if there are multiple test classes that
+use this function, another approach would be required to assimilate the multiple
+results since this approach relies on the class object staying persistent between
+tests. The results of this tool is the same as the proper coverage tool, i.e.
+I was able to locate the same clause that has not been run.
 
 ## Coverage improvement
 
-Show the comments that describe the requirements for the coverage.
-
-Report of old coverage: [link]
-
-Report of new coverage: [link]
-
-Test cases added:
-
-git diff ...
-
-Number of test cases added: two per team member (P) or at least four (P+).
-
----
+The coverage for the class file I was working with was 96%, there
+were 2 clauses unaccounted for in 2 different functions.
 
 I added a test case for _get_inputs since there was one exception
 that was not covered.
+
+I added a test case for _get_form since there was one unused line
+of code where one kind of input wasn't taken into account.
+
+After adding these tests, the coverage report showed 99% and the
+expected result of the 2 missing clauses now actually being
+covered shows on the report as well as the manual instrumentation tool.
 
 ## Self-assessment: Way of working
 
