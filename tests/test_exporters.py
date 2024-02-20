@@ -122,6 +122,7 @@ class BaseItemExporterTest(unittest.TestCase):
 
         ie = self._get_exporter(fields_to_export={"name": "名稱"})
         self.assertEqual(list(ie._get_serialized_fields(self.i)), [("名稱", "John\xa3")])
+        ie.get_form_COVERAGE()
 
     def test_field_custom_serializer(self):
         i = self.custom_field_item_class(name="John\xa3", age="22")
