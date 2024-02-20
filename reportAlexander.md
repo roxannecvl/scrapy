@@ -36,7 +36,9 @@ the test suite also takes upwards of 10 minutes.
 The function I am going to be looking at is _get_form in 
 scrapy/http/request/form.py. Using the lizard tool, it assigns
 the function a value of 12 CCN and an NLOC of 37. A manual count by
-counting the decision points and adding 1 gives us a CCN of 12.
+counting the decision points and adding 1 gives us a CCN of 12. Using
+the calculation method from the lecture we instead get Number of
+Decisions = 11, Exit Points = 7, totalling 11-7+2=6.
 
 The purpose of the function is to find a form in an HTTP request.
 There is not much documentation on this function since the convention
