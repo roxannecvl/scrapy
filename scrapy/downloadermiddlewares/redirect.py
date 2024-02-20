@@ -163,7 +163,8 @@ class RedirectMiddleware(BaseRedirectMiddleware):
         redirected = self._redirect_request_using_get(request, redirected_url)
         return self._redirect(redirected, request, spider, response.status) #s=4
     
-    #Total CCN = 9 - 4 + 2 = 7 (10 according to lizard)
+    #course definition : Total CCN  = 9 - 4 + 2 = 7 (10 according to lizard)
+    #lizard/ internet definition : Total CCN = 9 + 1 = 10 (same as lizard)
 
 class MetaRefreshMiddleware(BaseRedirectMiddleware):
     enabled_setting = "METAREFRESH_ENABLED"
