@@ -1429,6 +1429,20 @@ class FormRequestTest(RequestTest):
     def test_from_response_get_form_COVERAGE(self):
         self.request_class.get_form_COVERAGE()
 
+    #def test_from_response_get_form_node_parents(self): #TODO
+        #self.request_class._get_form()
+
+    def test_from_response_get_inputs_throws_valueError(self):
+        response = _buildresponse(
+            b"""<form action="post.php" method="POST">
+            <input type="hidden" name="test" value="val1">
+            <input type="hidden" name="test" value="val2">
+            <input type="hidden" name="test2" value="xxx">
+            </form>""",
+            url="http://www.example.com/this/list.html",
+        )
+        self.assertRaises(ValueError, self.request_class.from_response, response, formdata={()})
+
 def _buildresponse(body, **kwargs):
     kwargs.setdefault("body", body)
     kwargs.setdefault("url", "http://example.com")

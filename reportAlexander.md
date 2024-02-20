@@ -148,6 +148,11 @@ git diff ...
 
 Number of test cases added: two per team member (P) or at least four (P+).
 
+---
+
+I added a test case for _get_inputs since there was one exception
+that was not covered.
+
 ## Self-assessment: Way of working
 
 Current state according to the Essence standard: ...
