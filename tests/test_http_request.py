@@ -1426,6 +1426,10 @@ class FormRequestTest(RequestTest):
             r = self.request_class.from_response(response)
             self.assertEqual(r.method, expected)
 
+    @classmethod
+    def tearDownClass(self):
+        self.request_class.get_form_COVERAGE()
+
 
 def _buildresponse(body, **kwargs):
     kwargs.setdefault("body", body)
