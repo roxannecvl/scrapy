@@ -68,6 +68,38 @@ class CookiesMiddlewareTest(TestCase):
         del self.mw
         del self.redirect_middleware
 
+
+    def test_request_meta_dont_redirect(self) : #new test 1
+        request = Request("http://scrapytest.org/", meta={"dont_redirect" : True})
+        response = Response("dummy_url")
+        self.assertEqual(response, self.redirect_middleware.process_response(request, response, self.spider))
+
+    def test_response_status_not_allowed (self): #new test 2
+        request = Request("http://scrapytest.org/")
+        response = Response("dummy_response",  headers={"Location": "dummy_loc"}, status=404)
+        self.assertEqual(response, self.redirect_middleware.process_response(request, response, self.spider))
+
+    def test_response_with_no_location (self): #new test 3
+        request = Request("http://scrapytest.org/")
+        response = Response("dummy_response")
+        self.assertEqual(response, self.redirect_middleware.process_response(request, response, self.spider))
+
+    def test_response_location_start_with_two_slash (self): #new test 4 
+        request1 = Request("https://scrapytest.org/")
+        response1 = Response("https://example.com", headers={"Location": "//example.com"}, status=302)
+
+        request2 = self.redirect_middleware.process_response(request1, response1, self.spider)
+
+        response2 = Response("https://example.com", headers={"Location": "https://example.com"}, status=302)
+        request3 = self.redirect_middleware.process_response(request1, response2, self.spider)
+        self.assertIsInstance(request2, Request)
+        self.assertIsInstance(request3, Request)
+        self.assertEqual(request2.url, request3.url)
+        self.assertEqual(request2.callback, request3.callback)
+        self.assertEqual(request2.method, request3.method)
+        self.assertEqual(request2.headers, request3.headers)
+
+
     def test_basic(self):
         req = Request("http://scrapytest.org/")
         assert self.mw.process_request(req, self.spider) is None
@@ -80,6 +112,7 @@ class CookiesMiddlewareTest(TestCase):
         req2 = Request("http://scrapytest.org/sub1/")
         assert self.mw.process_request(req2, self.spider) is None
         self.assertEqual(req2.headers.get("Cookie"), b"C1=value1")
+
 
     def test_setting_false_cookies_enabled(self):
         self.assertRaises(
