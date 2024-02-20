@@ -29,6 +29,15 @@ __all__ = [
 
 
 class BaseItemExporter:
+    coverage_list = [False, False, False, False,
+                    False, False, False, False,
+                    False, False, False, False,
+                    False, False, False] 
+    
+    def get_form_COVERAGE(self):
+        print("Coverage List:")
+        print(self.coverage_list)
+
     def __init__(self, *, dont_fail=False, **kwargs):
         self._kwargs = kwargs
         self._configure(kwargs, dont_fail=dont_fail)
@@ -57,46 +66,57 @@ class BaseItemExporter:
 
     def finish_exporting(self):
         pass
-
+    
     def _get_serialized_fields(self, item, default_value=None, include_empty=None):
-        """Return the fields to export as an iterable of tuples
-        (name, serialized_value)
-        """
         item = ItemAdapter(item)
 
         if include_empty is None:
-            include_empty = self.export_empty_fields
+            self.coverage_list[0] = True
+        else:
+            self.coverage_list[1] = True
 
         if self.fields_to_export is None:
+            self.coverage_list[2] = True
             if include_empty:
+                self.coverage_list[3] = True
                 field_iter = item.field_names()
             else:
+                self.coverage_list[4] = True
                 field_iter = item.keys()
         elif isinstance(self.fields_to_export, Mapping):
+            self.coverage_list[5] = True
             if include_empty:
+                self.coverage_list[6] = True
                 field_iter = self.fields_to_export.items()
             else:
-                field_iter = (
-                    (x, y) for x, y in self.fields_to_export.items() if x in item
-                )
+                self.coverage_list[7] = True
+                field_iter = ((x, y) for x, y in self.fields_to_export.items() if x in item)
         else:
+            self.coverage_list[8] = True
             if include_empty:
+                self.coverage_list[9] = True
                 field_iter = self.fields_to_export
             else:
+                self.coverage_list[10] = True
                 field_iter = (x for x in self.fields_to_export if x in item)
 
         for field_name in field_iter:
             if isinstance(field_name, str):
+                self.coverage_list[11] = True
                 item_field, output_field = field_name, field_name
             else:
+                self.coverage_list[12] = True
                 item_field, output_field = field_name
             if item_field in item:
+                self.coverage_list[13] = True
                 field_meta = item.get_field_meta(item_field)
                 value = self.serialize_field(field_meta, output_field, item[item_field])
             else:
+                self.coverage_list[14] = True
                 value = default_value
 
             yield output_field, value
+
 
 
 class JsonLinesItemExporter(BaseItemExporter):
