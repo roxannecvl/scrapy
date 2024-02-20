@@ -175,7 +175,7 @@ def _get_form(
                     _get_form_COVERAGE[15] = True
                 el = el.getparent()
                 if el is None: #10
-                    _get_form_COVERAGE[16] = True #TODO Not Covered!
+                    _get_form_COVERAGE[16] = True
                     break
                 else:
                     _get_form_COVERAGE[17] = True
