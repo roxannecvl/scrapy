@@ -22,7 +22,8 @@ In this report you will see for each section 5 sub-sections, one for each group 
 As a recap here is our statement of contribution : 
 
 ###### AIMING FOR P : 
-**Alexander** : worked on _get_form in scrapy/scrapy/http/request/form.py, ....
+**Alexander** : worked on _get_form in scrapy/scrapy/http/request/form.py by adding the ad-hoc coverage tool to it, improved the coverage of the form.py file
+by adding 2 tests related to the class.
 
 **Rached** : worked on run in scrapy/scrapy/commands/check.py and 
 
@@ -339,6 +340,4 @@ In other aspects our team works well, our communication is always open and hones
 
 ## Overall experience
 
-What are your main take-aways from this project? What did you learn?
-
-Is there something special you want to mention here?
+Our main takeaway from working with this assignment is that large projects with large codebases is quite a major feat to work with. Even the main branch that we forked had tests that failed and getting full coverage of a large codebase seems nigh impossible. Running and setting up your environment to be able to run and test this project took a long time. Overall though, we thought this was a useful experience to have as working with large codebases is what most developers do and gaining familiarity with the inner workings of such codebases is defintively a useful skill to have. 
