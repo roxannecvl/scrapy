@@ -110,16 +110,9 @@ class RedirectMiddleware(BaseRedirectMiddleware):
     def process_response(
         self, request: Request, response: Response, spider: Spider
     ) -> Union[Request, Response]:
-        if (
-            request.meta.get("dont_redirect", False)
-            or response.status in getattr(spider, "handle_httpstatus_list", [])
-            or response.status in request.meta.get("handle_httpstatus_list", [])
-            or request.meta.get("handle_httpstatus_all", False)
-        ):
-            return response
-
+        
         allowed_status = (301, 302, 303, 307, 308)
-        if "Location" not in response.headers or response.status not in allowed_status:
+        if (self._check_conditions_process_response(request, response, spider, allowed_status)):
             return response
 
         assert response.headers["Location"] is not None
@@ -137,7 +130,18 @@ class RedirectMiddleware(BaseRedirectMiddleware):
         redirected = self._redirect_request_using_get(request, redirected_url)
         return self._redirect(redirected, request, spider, response.status)
 
-
+    def _check_conditions_process_response(
+        self, request: Request, response: Response, spider: Spider, allowed_status
+    ) -> bool : 
+        return (
+            request.meta.get("dont_redirect", False)
+            or response.status in getattr(spider, "handle_httpstatus_list", [])
+            or response.status in request.meta.get("handle_httpstatus_list", [])
+            or request.meta.get("handle_httpstatus_all", False) 
+            or "Location" not in response.headers
+            or response.status not in allowed_status
+        )
+        
 class MetaRefreshMiddleware(BaseRedirectMiddleware):
     enabled_setting = "METAREFRESH_ENABLED"
 
