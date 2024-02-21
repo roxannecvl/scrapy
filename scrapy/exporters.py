@@ -29,6 +29,15 @@ __all__ = [
 
 
 class BaseItemExporter:
+    coverage_list = [False, False, False, False,
+                    False, False, False, False,
+                    False, False, False, False,
+                    False, False, False] 
+    
+    def get_form_COVERAGE(self):
+        print("Coverage List:")
+        print(self.coverage_list)
+
     def __init__(self, *, dont_fail=False, **kwargs):
         self._kwargs = kwargs
         self._configure(kwargs, dont_fail=dont_fail)
@@ -57,46 +66,63 @@ class BaseItemExporter:
 
     def finish_exporting(self):
         pass
-
+    
+    #Return the fields to export as an iterable of tuples (name, serialized_value)
     def _get_serialized_fields(self, item, default_value=None, include_empty=None):
-        """Return the fields to export as an iterable of tuples
-        (name, serialized_value)
-        """
         item = ItemAdapter(item)
-
-        if include_empty is None:
-            include_empty = self.export_empty_fields
-
-        if self.fields_to_export is None:
-            if include_empty:
-                field_iter = item.field_names()
-            else:
-                field_iter = item.keys()
-        elif isinstance(self.fields_to_export, Mapping):
-            if include_empty:
-                field_iter = self.fields_to_export.items()
-            else:
-                field_iter = (
-                    (x, y) for x, y in self.fields_to_export.items() if x in item
-                )
-        else:
-            if include_empty:
-                field_iter = self.fields_to_export
-            else:
-                field_iter = (x for x in self.fields_to_export if x in item)
+        include_empty = self._handle_include_empty(include_empty)
+        field_iter = self._generate_field_iter(item, include_empty)
 
         for field_name in field_iter:
-            if isinstance(field_name, str):
-                item_field, output_field = field_name, field_name
-            else:
-                item_field, output_field = field_name
-            if item_field in item:
-                field_meta = item.get_field_meta(item_field)
-                value = self.serialize_field(field_meta, output_field, item[item_field])
-            else:
-                value = default_value
-
+            output_field, value = self._process_field(item, field_name, default_value)
             yield output_field, value
+
+    #Handle the include_empty parameter
+    def _handle_include_empty(self, include_empty):
+        if include_empty is None:
+            return self.export_empty_fields
+        return include_empty
+
+    #Generate the iterable of fields
+    def _generate_field_iter(self, item, include_empty):
+        if self.fields_to_export is None:
+            return self._generate_field_iter_none(item, include_empty)
+        elif isinstance(self.fields_to_export, Mapping):
+            return self._generate_field_iter_mapping(item, include_empty)
+        else:
+            return self._generate_field_iter_iterable(item, include_empty)
+
+    #Generate field_iter when fields_to_export is None
+    def _generate_field_iter_none(self, item, include_empty):
+        if include_empty:
+            return item.field_names()
+        return item.keys()
+
+    #Generate field_iter when fields_to_export is a Mapping
+    def _generate_field_iter_mapping(self, item, include_empty):
+        if include_empty:
+            return self.fields_to_export.items()
+        return ((x, y) for x, y in self.fields_to_export.items() if x in item)
+
+    #Generate field_iter when fields_to_export is an iterable
+    def _generate_field_iter_iterable(self, item, include_empty):
+        if include_empty:
+            return self.fields_to_export
+        return (x for x in self.fields_to_export if x in item)
+
+    #Process a field
+    def _process_field(self, item, field_name, default_value):
+        if isinstance(field_name, str):
+            item_field, output_field = field_name, field_name
+        else:
+            item_field, output_field = field_name
+        if item_field in item:
+            field_meta = item.get_field_meta(item_field)
+            value = self.serialize_field(field_meta, output_field, item[item_field])
+        else:
+            value = default_value
+        return output_field, value
+
 
 
 class JsonLinesItemExporter(BaseItemExporter):
