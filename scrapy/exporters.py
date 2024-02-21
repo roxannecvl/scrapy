@@ -29,15 +29,6 @@ __all__ = [
 
 
 class BaseItemExporter:
-    coverage_list = [False, False, False, False,
-                    False, False, False, False,
-                    False, False, False, False,
-                    False, False, False] 
-    
-    def get_form_COVERAGE(self):
-        print("Coverage List:")
-        print(self.coverage_list)
-
     def __init__(self, *, dont_fail=False, **kwargs):
         self._kwargs = kwargs
         self._configure(kwargs, dont_fail=dont_fail)
