@@ -313,7 +313,9 @@ Then after adding the two missing test cases :
 
 [True , True , True, True, True, True, True ]
 
-####
+#### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
+
+
 
 ## Coverage improvement
 
@@ -349,6 +351,14 @@ My function was already had 100% coverage as seen in the Coverage.py tool so I c
 
 I added two test cases for strip_url because there was 2 branch missing 
 So after adding the tests test_no_strip_fragment and test_no_origin the coverage is 100%
+
+#### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
+
+When running Coverage.py, the class file I was handling had 20% branch coverage, while the `_get_callback` method only had <10% and no test cases for it specifically. After adding my four test cases, I have improved to overall branch coverage of the file to 28%, while I managed to cover 80% of the method. The test cases are added in `/test/test_command_parse.py` and have small comment describing the conditions they are testing for. Of course, the whole file can be further tested in the future, as well as covering the remaining partial and neglected branches in the `_get_callback` method.
+
+![before](./img/_get_callback-coverage-before.png)
+
+![after](./img/_get_callback-coverage-after.png)
 
 
 ## Self-assessment: Way of working
