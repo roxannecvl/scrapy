@@ -258,7 +258,7 @@ If (a or b) :
     do_something()
 ```
 
-Then in the tear_down part of the two tests files I added a print of my coevrage_array so that you can see how it evolves after each test has passed. 
+Then in the tear_down part of the two tests files I added a print of my coverage_array so that you can see how it evolves after each test has passed. 
 
 #### _get_serialized_fields in scrapy/scrapy/exporters.py by Iley
 The way my coverage tool works is by having an array and each time a part of the function I am measuring the coverage for is visited that part of the array is set to True instead of False. So for example if the second branch of the function is visited the second boolean in my array would be set to True. Each time a test is run the coverage is printed out to the console which means that the last time it is printed out the final coverage is shown. One part which may seem very easy but was the hardest about making the coverage tool was to actaully get any output at all when running the tests in the tox testing environment. To make this work I added a -s flag in the tox.ini file on the pytest row which allowed prints to be done to the console while the tox tests were run. 
@@ -267,8 +267,9 @@ The way my coverage tool works is by having an array and each time a part of the
 
 I used the same solution as Roxanne : i created a boolean array filed with False to check the fufilled branch
 
-#### 
+#### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
 
+My Coverage Tool is similar to my groupmates, as it is essentially a list of boolean values first all initialized to `False`. In my case, I have counted that I have nine branches in my method, and therefore created a list of 9 boolean values. Whenever the methods runs/is tested, if the programme traverses that branch, it will update the list of boolean values to `True` according to which branch it is on (the branches are mapped to a specific index in the list). After the function finishes running, the list of boolean values are outputted in the console. In my case, as I have no test cases given to me, I will use my own test cases to demonstrate the results, which is evaluated in the next section.
 
 ### Evaluation
 
@@ -315,6 +316,21 @@ Then after adding the two missing test cases :
 
 #### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
 
+Since there were no test cases for my method to evaluate my ad-hoc tool, I have decided to run the tool on my personal test cases obtaining the following results where each result corresponds to the index of the test case:
+
+Coverage List:
+[False, True, False, False, False, True, True, True, False]
+
+.Coverage List:
+[False, True, False, False, False, True, True, True, False]
+
+.Coverage List:
+[False, True, True, False, False, True, True, True, True]
+
+.Coverage List:
+[True, True, True, False, False, True, True, True, True]
+
+From these results, we can tell some branches were never tested, specifically Index 1, 3 and 4 are constant throughout all four test cases and these results are inline with the Coverage Tools HTML output which we can see below. This can guide future testing cases on targetting these three specific conditions. Overall, while this tool is fairly simple and takes up more codespace, its output can help support decisions regarding how to develop test cases without having to rely on third-party libraries as it is easy to make.
 
 
 ## Coverage improvement
