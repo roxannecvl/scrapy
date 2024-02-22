@@ -252,27 +252,62 @@ class Command(BaseRunSpiderCommand):
 
         return scraped_data
 
-    def _get_callback(self, *, spider, opts, response=None):
-        cb = None
-        if response:
-            cb = response.meta["_callback"]
-        if not cb:
-            if opts.callback:
-                cb = opts.callback
-            elif response and opts.rules and self.first_response == response:
-                cb = self.get_callback_from_rules(spider, response)
-                if not cb:
-                    raise ValueError(
-                        f"Cannot find a rule that matches {response.url!r} in spider: "
-                        f"{spider.name}"
-                    )
-            else:
-                cb = "parse"
+    # def _get_callback(self, *, spider, opts, response=None):
+    #     cb = None
+    #     if response:
+    #         cb = response.meta["_callback"]
+    #     if not cb:
+    #         if opts.callback:
+    #             cb = opts.callback
+    #         elif response and opts.rules and self.first_response == response:
+    #             cb = self.get_callback_from_rules(spider, response)
+    #             if not cb:
+    #                 raise ValueError(
+    #                     f"Cannot find a rule that matches {response.url!r} in spider: "
+    #                     f"{spider.name}"
+    #                 )
+    #         else:
+    #             cb = "parse"
 
+    #     if not callable(cb):
+    #         cb_method = getattr(spider, cb, None)
+    #         if callable(cb_method):
+    #             cb = cb_method
+    #         else:
+    #             raise ValueError(
+    #                 f"Cannot find callback {cb!r} in spider: {spider.name}"
+    #             )
+    #     return cb
+
+    # Main Method
+    def _get_callback(self, *, spider, opts, response=None):
+        cb = self._extract_callback(spider, response, opts)
+        cb = self._validate_callback(cb, spider)
+        return cb
+
+    # Helper Methods
+    def _extract_callback(self, spider, response, opts):
+        if response:
+            cb = response.meta.get("_callback")
+        else:
+            cb = opts.callback if opts.callback else self._get_callback_from_rules(spider, response)
+        return cb if cb else "parse"
+
+    def _get_callback_from_rules(self, spider, response):
+        if response and self.first_response == response:
+            cb = self.get_callback_from_rules(spider, response)
+            if not cb:
+                raise ValueError(
+                    f"Cannot find a rule that matches {response.url!r} in spider: "
+                    f"{spider.name}"
+                )
+            return cb
+
+    def _validate_callback(self, cb, spider):
         if not callable(cb):
             cb_method = getattr(spider, cb, None)
             if callable(cb_method):
-                cb = cb_method
+                return cb_method
             else:
                 raise ValueError(
                     f"Cannot find callback {cb!r} in spider: {spider.name}"
