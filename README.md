@@ -170,7 +170,30 @@ This is done in the branch `refactoring_process_response` in `scrapy/scrapy/down
 The function then becomes easier to read, however, if you want to understand well what it does you should check the helper function. So depending on how well you would like to understand the function, having the helper function might actually give you more work. 
 
 #### _get_serialized_fields in scrapy/scrapy/exporters.py by Iley
-The high complexity of the “_get_serialized_fields” function is not completely necessary since it could be split up instead into different functions. I did this in the “refactoring_serialized_function” branch. The way this was done was by splitting up the function into smaller pieces and making functions out of these pieces. Very little code had to be added or modified for this and therefore it was an efficient and good process. In the end, the function ended up with a much lower cyclomatic complexity because of this and arguably also easier to understand since each function it was split into has an easy-to-understand name instead of all the code being in one big function without any comments. This refactoring was done in the branch `refactoring_serializaed_function` in the following commit: https://github.com/roxannecvl/scrapy/commit/c3682913e845821194b85ea33b3bc026f7cc2a03.
+The high complexity of the “_get_serialized_fields” function is not completely necessary since it could be split up instead into different functions. I did this in the “refactoring_serialized_function” branch. The way this was done was by splitting up the function into smaller pieces and making functions out of these pieces. Very little code had to be added or modified for this and therefore it was an efficient and good process. In the end, the function ended up with a much lower cyclomatic complexity because of this and arguably also easier to understand since each function it was split into has an easy-to-understand name instead of all the code being in one big function without any comments. This refactoring was done in the branch `refactoring_serializaed_function` in the following commit: https://github.com/roxannecvl/scrapy/commit/c3682913e845821194b85ea33b3bc026f7cc2a03.The functions that "_get_serialized_fields" was split into and a short description of them can be seen below:
+
+```python
+#Return the fields to export as an iterable of tuples (name, serialized_value)
+def _get_serialized_fields(self, item, default_value=None, include_empty=None):
+  
+#Handle the include_empty parameter
+def _handle_include_empty(self, include_empty): 
+
+#Generate the iterable of fields
+def _generate_field_iter(self, item, include_empty):
+
+#Generate field_iter when fields_to_export is None
+def _generate_field_iter_none(self, item, include_empty):
+
+#Generate field_iter when fields_to_export is a Mapping
+def _generate_field_iter_mapping(self, item, include_empty):
+
+#Generate field_iter when fields_to_export is an iterable
+def _generate_field_iter_iterable(self, item, include_empty):
+
+#Process a field
+def _process_field(self, item, field_name, default_value):
+```
 
 #### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
 Due to the importance each line has in the "_get_callback" method, removing or reducing NLOC will potentially break the program. Therefore, the best method for reducing the CCN of the method was to split it into several helper functions, where each function has a CCN of <=4 (where the original had a CCN of 10) which reduces the complexity of running one function, but this might have a marginal impact on the performance of the method due to having multiple functional calls, this also significantly aids in the code's readability as the original `get_callback` method had too many conditional statements in it. As I am also aiming for P+, I have implemented the refactoring which was made on the `refactoring_get_callback_function` branch in its corresponding commit: https://github.com/roxannecvl/scrapy/commit/40f14171abf01cd740648561eb86d4bf6b203520. The function was split into the following main and helper functions:
