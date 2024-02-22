@@ -172,6 +172,8 @@ The function then becomes easier to read, however if you want to understand well
 #### _get_serialized_fields in scrapy/scrapy/exporters.py by Iley
 The high complexity of the “_get_serialized_fields” function is not completely necessary since it could be split up instead into different functions. I did this in the “refactoring_serialized_function” branch. The way this was done was by splitting up the function into smaller pieces and making functions out of these pieces. Very little code had to be added or modified for this and therefore it was efficient and good process. In the end the function ended up with a much lower cyclomatic complexity because of this and arguably also more easy to understand since each function it was split into has an easy to understand name instead of all the code being in one big function without any comments.
 
+#### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
+Due to the important each line has in the "_get_callback" method, removing or reducing NLOC will potentially break the program. Therefore, the best method for reducing the CCN of the method was to split it into several helper functions, where each function has a CCN of <=4 (where the original had CCN of 10), this also significantly aids in the code's readability as the original `get_callback` method had too many conditional statements in it. The changes where made on the `refactoring_get_callback_function` branch in its corresponding commit.
 
 ## Coverage
 
