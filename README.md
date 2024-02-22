@@ -219,6 +219,9 @@ I used Coverage.py to test the coverage for the function I was working on. I did
 (I changed function because the function run of check was already covered)
 I used coverage to see which branches are covered and there was two branch missing for this function (the one where strip_fragment is False and the one where origin_only is false)
 
+### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
+I initially ran Coverage.py before I work on a function to determine the level of branch coverage in its corresponding test files, and after running Coverage for `tests/test_command_parse.py` and running `coverage html` for further investigation, I found that it had only 20% total branch coverage, and the method which I have chosen had <10% as it did not have any specific test cases for it in the test file. The tool also helped me spotted a flaw test case in the file which I have commented out. In the end, my test cases expanded the total branch coverage of the file by 8%, and the total coverage of the function went from ~10% to 80%.
+
 
 ### Your own coverage tool
 
@@ -261,6 +264,8 @@ The way my coverage tool works is by having an array and each time a part of the
 #### run in scrapy/scrapy/commands/check by Rached
 
 I used the same solution as Roxanne : i created a boolean array filed with False to check the fufilled branch
+
+#### 
 
 
 ### Evaluation
@@ -306,6 +311,7 @@ Then after adding the two missing test cases :
 
 [True , True , True, True, True, True, True ]
 
+####
 
 ## Coverage improvement
 
