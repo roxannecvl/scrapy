@@ -563,6 +563,10 @@ class StripUrl(unittest.TestCase):
             self.assertEqual(
                 strip_url(i, strip_default_port=False, strip_credentials=False), o
             )
+  
+        
+
+
 
     def test_origin_only(self):
         for i, o in [
@@ -584,6 +588,49 @@ class StripUrl(unittest.TestCase):
             ),
         ]:
             self.assertEqual(strip_url(i, origin_only=True), o)
+
+    def test_no_origin(self):
+        for i, o in [
+            (
+                "http://username:password@www.example.com/index.html",
+                "http://www.example.com/",
+            ),
+            (
+                "http://username:password@www.example.com:80/foo/bar?query=value#somefrag",
+                "http://www.example.com/",
+            ),
+            (
+                "http://username:password@www.example.com:8008/foo/bar?query=value#somefrag",
+                "http://www.example.com:8008/",
+            ),
+            (
+                "https://username:password@www.example.com:443/index.html",
+                "https://www.example.com/",
+            ),
+        ]:
+            self.assertNotEqual(strip_url(i, origin_only=False), o)
+
+    def test_no_strip_fragment(self):
+        for i, o in [
+            (
+                "http://www.example.com/index.html?somekey=somevalue#section",
+                "http://www.example.com/index.html?somekey=somevalue#section",
+            ),
+            (
+                "http://www.example.com/index.html#section",
+                "http://www.example.com/index.html#section",
+            ),
+            (
+                "http://www.example.com/index.html?somekey=somevalue",
+                "http://www.example.com/index.html?somekey=somevalue",
+            ),
+            (
+                "http://www.example.com/index.html",
+                "http://www.example.com/index.html",
+            ),
+        ]:
+            self.assertEqual(strip_url(i, strip_fragment=False), o)
+
 
 
 class IsPathTestCase(unittest.TestCase):
