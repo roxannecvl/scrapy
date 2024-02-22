@@ -27,17 +27,17 @@ by adding 2 tests related to the class.
 
 **Rached** : worked on run in scrapy/scrapy/commands/check.py and 
 
-**Marcus** : ...
-
 ###### AIMING FOR P+ : 
 **Roxanne** : I worked on process_response in scrapy/scrapy/downloadermiddlewares/redirect.py, I've created an adhoc tool for this function and 4 new tests to improve branch coverage. I also refactored this function in the `refactoring_process_response`branch. Moreover I've filled the **Structure**, **Statement of contribution** and **Self-assessment: Way of working** sections of this report and added my individual subsection for **Complexity**, **Refactoring**, **Coverage** and **Coverage improvement** sections. 
 
 **Iley** : I worked on the _get_serialized_fields function in https://github.com/roxannecvl/scrapy/blob/master/scrapy/exporters.py
 I created an adhoc coverage tool for this function and also added 4 new tests to it. Additionally I refactored the function which can be seen in the refactoring_serialized_function branch. Besides that I also wrote my individual subsection for **Complexity**, **Refactoring**, **Coverage** and **Coverage improvement**. 
 
+**Marcus** : Worked on the "_get_callback()" method in "scrapy/commands/parse.py" file and added 4 new test cases to the method in the corresponding test file "test/test_command_parse.py" as it has <10% branch coverage. Additionally, I have also wrote the sections regarding my contributions to the codebase on **Complexity**, **Refactoring**, **Coverage** and **Coverage improvement**.
+
 ## Onboarding experience
 
-We started off with Pyspider which made use of a requirements.txt to
+We started off with PySpider which made use of a requirements.txt to
 document the dependencies which Python has tools to download automatically.
 Running the tests however, we discovered that somethings had been deprecated
 meaning a major overhaul would be required to get the code running and we
@@ -79,7 +79,7 @@ operators 'or' and 'and' within the if statements.
 ##### The complexity 
 At first, I worked on another function but latter realised that it was very well covered, I decided to switch the function process_response in scrapy/scrapy/downloadermiddlewares/redirect.py in the class RedirectMiddleware. 
 To get the cyclomatic complexity of this function, I first use the lizard tool which outputed a CCN of 10. 
-For the manual count part, I used two different methods, the one seen in class, where we get : Number of Decisions = 9, Exit Points = 4, totalling 9 - 4 + 2 = 6.
+For the manual count part, I used two different methods, the one seen in class, where we get : Number of Decisions = 9, Exit Points = 4, totalling 9 - 4 + 2 = 7.
 As this didn't match with the lizard output, I tried to find another way of counting and did several test with mini-functions I've created. It seems that lizard counts the CCN as Number of Decisions + 1, by doing that I get 9 + 1 = 10, same result as lizard ! 
 
 ##### The length of the function 
@@ -109,6 +109,17 @@ Number of Decisions = 11, Exit Points = 1, totalling 11-1+2=12.
 
 The run method in check.py serves as the command-line interface for checking spider contracts, dynamically modifying spider classes, and orchestrating the execution of contract tests, with options for listing contracts or displaying detailed results.
 
+#### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
+
+Initially, I ran the lizard tool to get an overview of the codebase and find which function has the highest CCN. At first, I chose the "strip_url" function from "scrapy/scrapy/utils/url.py" with 12 CCN, but since it has 100% branch coverage, I switched to "_get_callback" method instead which lizard said 10 CCN. Using the Edges and Nodes Method, I calculated that there are 22 Edges and 17 Nodes, therefore the CCN came out as 22 - 17 + 2 = 7, which was different from what lizard outputted. Using the Predicate / Number of Decisions Method, there were 9 Predicates meaning that the CCN came out as 9 + 1 = 10, same as what the tool calculated.
+
+While the Number of Lines of Code (NLOC) for this method came out as 25, which does not seem that much. But it shows that a function/method can be heavily branched while still remaining succinct in codespace, or it can also be due to the way it was formatted by the original programmer.
+
+Since ScraPy is a web-scraping library, the purpose of "_get_callback" method is to determine which callback functions to call in order to parse a response from the Spider class. It can dynamically determine the callback functions while also having validation and error handling branches to make sure all callbacks are valid.
+
+As I am using Python which uses exceptions, in this particular case the method does not have any exceptions written in it and therefore it will not affect the complexity of the method.
+
+Lastly, my file and more specifcally, my method does not come with any documentation or comments to follow through and understand the code, meaning for newcomers to the codebase there will be a difficult learning curve to adjust and learn the intricacies of the code before they can properly contribute and develop.
 
 ## Refactoring
 
