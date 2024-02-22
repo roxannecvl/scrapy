@@ -24,6 +24,12 @@ logger = logging.getLogger(__name__)
 class Command(BaseRunSpiderCommand):
     requires_project = True
 
+    coverage_list = [ False, False, False, False, False, False, False, False, False ]
+
+    def get_form_COVERAGE(self):
+        print("Coverage List:")
+        print(self.coverage_list)
+
     spider = None
     items: Dict[int, list] = {}
     requests: Dict[int, list] = {}
@@ -254,30 +260,42 @@ class Command(BaseRunSpiderCommand):
 
     def _get_callback(self, *, spider, opts, response=None):
         cb = None
-        if response:
+        if response: # 1
             cb = response.meta["_callback"]
-        if not cb:
-            if opts.callback:
+            self.coverage_list[0] = True
+        if not cb: # 2
+            self.coverage_list[1] = True
+            if opts.callback: # 3
+                self.coverage_list[2] = True
                 cb = opts.callback
-            elif response and opts.rules and self.first_response == response:
+            elif response and opts.rules and self.first_response == response:  # 4
+                self.coverage_list[3] = True
                 cb = self.get_callback_from_rules(spider, response)
-                if not cb:
-                    raise ValueError(
+                if not cb: # 5
+                    self.coverage_list[4] = True
+                    raise ValueError( 
                         f"Cannot find a rule that matches {response.url!r} in spider: "
                         f"{spider.name}"
                     )
-            else:
+            else: # 6
+                self.coverage_list[5] = True
                 cb = "parse"
 
-        if not callable(cb):
+        if not callable(cb): # 7
+            self.coverage_list[6] = True
             cb_method = getattr(spider, cb, None)
-            if callable(cb_method):
+            if callable(cb_method): # 8
+                self.coverage_list[7] = True
                 cb = cb_method
-            else:
+            else: # 9
+                self.coverage_list[8] = True
                 raise ValueError(
                     f"Cannot find callback {cb!r} in spider: {spider.name}"
                 )
-        return cb
+        return cb # exit
+    # Total CNN:
+    # Edge and Node / Course Calculation: CNN = 9 - 1 + 2 = 10
+    # Lizard / Decision Node Calculation: CNN = 9 + 1 = 10
 
     def prepare_request(self, spider, request, opts):
         def callback(response, **cb_kwargs):
