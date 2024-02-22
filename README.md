@@ -170,10 +170,19 @@ This is done in the branch `refactoring_process_response` in `scrapy/scrapy/down
 The function then becomes easier to read, however, if you want to understand well what it does you should check the helper function. So depending on how well you would like to understand the function, having the helper function might actually give you more work. 
 
 #### _get_serialized_fields in scrapy/scrapy/exporters.py by Iley
-The high complexity of the “_get_serialized_fields” function is not completely necessary since it could be split up instead into different functions. I did this in the “refactoring_serialized_function” branch. The way this was done was by splitting up the function into smaller pieces and making functions out of these pieces. Very little code had to be added or modified for this and therefore it was an efficient and good process. In the end the function ended up with a much lower cyclomatic complexity because of this and arguably also easier to understand since each function it was split into has an easy-to-understand name instead of all the code being in one big function without any comments.
+The high complexity of the “_get_serialized_fields” function is not completely necessary since it could be split up instead into different functions. I did this in the “refactoring_serialized_function” branch. The way this was done was by splitting up the function into smaller pieces and making functions out of these pieces. Very little code had to be added or modified for this and therefore it was an efficient and good process. In the end, the function ended up with a much lower cyclomatic complexity because of this and arguably also easier to understand since each function it was split into has an easy-to-understand name instead of all the code being in one big function without any comments. This refactoring was done in the branch `refactoring_serializaed_function` in the following commit: https://github.com/roxannecvl/scrapy/commit/c3682913e845821194b85ea33b3bc026f7cc2a03.
 
 #### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
-Due to the importance each line has in the "_get_callback" method, removing or reducing NLOC will potentially break the program. Therefore, the best method for reducing the CCN of the method was to split it into several helper functions, where each function has a CCN of <=4 (where the original had CCN of 10), this also significantly aids in the code's readability as the original `get_callback` method had too many conditional statements in it. The changes were made on the `refactoring_get_callback_function` branch in its corresponding commit.
+Due to the importance each line has in the "_get_callback" method, removing or reducing NLOC will potentially break the program. Therefore, the best method for reducing the CCN of the method was to split it into several helper functions, where each function has a CCN of <=4 (where the original had a CCN of 10) which reduces the complexity of running one function, but this might have a marginal impact on the performance of the method due to having multiple functional calls, this also significantly aids in the code's readability as the original `get_callback` method had too many conditional statements in it. As I am also aiming for P+, I have implemented the refactoring which was made on the `refactoring_get_callback_function` branch in its corresponding commit: https://github.com/roxannecvl/scrapy/commit/40f14171abf01cd740648561eb86d4bf6b203520. The function was split into the following main and helper functions:
+```python
+# Main Method
+def _get_callback(self, *, spider, opts, response=None)
+
+# Helper Functions:
+def _extract_callback(self, spider, response, opts)
+def _get_callback_from_rules(self, spider, response)
+def _validate_callback(self, cb, spider)
+```
 
 ## Coverage
 
@@ -210,8 +219,8 @@ covered.
 
 First I used GitHub's code indexing and found out that my function was tested in two separate files: `tests/test_spidermiddleware_referer.py` and  `tests/test_downloadermiddleware_cookies.py`. 
 I ran these two tests with the following command `coverage run -m unittest tests/test_spidermiddleware_referer.py tests/test_downloadermiddleware_cookies.py` and found out that there were 71 tests ran but 3 failing ones. By inspecting them I saw that the
-three failing ones had the following comment: `@pytest.mark.xfail(reason="Cookie header is not currently being processed")` I therefore decided to comment them out since there weren't supposed to be run. I then had 68 passing tests when running the command once again. 
-By running `coverage html`afterwards I found out that my function was poorly covered. 3 paths were never tested, moreover there were many ways to access two of these paths (because of or conditions). 
+three failing ones had the following comment: `@pytest.mark.xfail(reason="Cookie header is not currently being processed")` I therefore decided to comment them out since they weren't supposed to be run. I then had 68 passing tests when running the command once again. 
+By running `coverage html`afterwards I found out that my function was poorly covered. 3 paths were never tested, moreover, there were many ways to access two of these paths (because of or conditions). 
 
 #### _get_serialized_fields in scrapy/scrapy/exporters.py by Iley
 I used Coverage.py to test the coverage for the function I was working on. I did this by checking the coverage for the tests relating to the exporters file which was where the function I was written. When doing this I noticed that the branch coverage for my function was 100%. 
@@ -222,7 +231,7 @@ I used Coverage.py to test the coverage for the function I was working on. I did
 I used coverage to see which branches are covered and there were two branches missing for this function (the one where strip_fragment is False and the one where origin_only is false)
 
 ### _get_callback in scrapy/scrapy/commands/parse.py by Marcus
-I initially ran Coverage.py before I worked on a function to determine the level of branch coverage in its corresponding test files, and after running Coverage for `tests/test_command_parse.py` and running `coverage html` for further investigation, I found that it had only 20% total branch coverage, and the method which I have chosen had <10% as it did not have any specific test cases for it in the test file. The tool also helped me spotted a flaw test case in the file which I have commented out. In the end, my test cases expanded the total branch coverage of the file by 8%, and the total coverage of the function went from ~10% to 80%.
+I initially ran Coverage.py before I worked on a function to determine the level of branch coverage in its corresponding test files, and after running Coverage for `tests/test_command_parse.py` and running `coverage html` for further investigation, I found that it had only 20% total branch coverage, and the method which I have chosen had <10% as it did not have any specific test cases for it in the test file. The tool also helped me spot a flaw test case in the file which I have commented out. In the end, my test cases expanded the total branch coverage of the file by 8%, and the total coverage of the function went from ~10% to 80%.
 
 
 ### Your own coverage tool
