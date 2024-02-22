@@ -25,7 +25,7 @@ As a recap here is our statement of contribution :
 **Alexander**: worked on _get_form in scrapy/scrapy/http/request/form.py by adding the ad-hoc coverage tool to it and improved the coverage of the form.py file
 by adding 2 tests related to the class.
 
-**Rached** : worked on run in scrapy/scrapy/commands/check.py and 
+**Rached** : worked on run in scrapy/scrapy/commands/check.py and strip_url in scrapy\utils\url.py
 
 ###### AIMING FOR P+ : 
 **Roxanne**: I worked on process_response in scrapy/scrapy/downloadermiddlewares/redirect.py, I've created an ad-hoc tool for this function and 4 new tests to improve branch coverage. I also refactored this function in the `refactoring_process_response`branch. Moreover, I've filled the **Structure**, **Statement of contribution** and **Self-assessment: Way of working** sections of this report and added my individual subsection for **Complexity**, **Refactoring**, **Coverage** and **Coverage improvement** sections. 
@@ -206,6 +206,37 @@ def _extract_callback(self, spider, response, opts)
 def _get_callback_from_rules(self, spider, response)
 def _validate_callback(self, cb, spider)
 ```
+
+
+### Refactoring plan of strip_url in scrapy\utils\url.py by Rached
+
+For the function strip_url whe can see that these conditions can be replaced by a function check_conditions :
+This could be a first step for the refactoring.
+
+```python
+if (strip_credentials or origin_only) and (
+        parsed_url.username or parsed_url.password
+    ):
+```
+
+Also here in the return the condition origin_only is checked 3 times we could make this more optimal and checking it once
+
+```python
+return urlunparse(
+        (
+            parsed_url.scheme,
+            netloc,
+            "/" if origin_only else parsed_url.path,
+            "" if origin_only else parsed_url.params,
+            "" if origin_only else parsed_url.query,
+            "" if strip_fragment else parsed_url.fragment,
+        )
+    )
+```
+This two step of refactoring would then lower the CCN.
+
+
+
 
 ## Coverage
 
